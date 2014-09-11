@@ -1,0 +1,124 @@
+\documentclass{article}
+\usepackage[spanish,activeacute]{babel}
+\usepackage{changepage}
+\usepackage[utf8]{inputenc}
+
+%% Datos del documento
+\title{Recorridos en árboles reflejados.}
+\author{Mario Román}
+
+
+%% Cuerpo del documento
+\begin{document}
+
+\maketitle
+
+\section{Árboles reflejados.}
+\subsection{Definiciones}
+\textbf{ Enunciado. Encontrar la relación entre los distintos recorridos en un
+  árbol binario y su árbol reflejado.
+} \\
+
+Un árbol binario será para nosotros una raíz de etiqueta $a$, unida
+a dos subárboles ordenados, izquierdo y derecho, $A_1$ y $A_2$.
+Un árbol binario es entonces de la forma $A = (A_1,a,A_2)$ o vacío $A = nulo$.
+Nótese que la división entre árboles y nodos es aquí casi inexistente,
+cada nodo es en sí un árbol con sus descendientes.\\
+Vamos a definir además la función que refleja al árbol y la función que invierte 
+un orden dado, para ello aplicamos inducción sobre la altura del árbol, que será
+siempre menor en una unidad en un subárbol frente al árbol inicial:\\
+
+Definimos el reflejado de $A$, $rfl(A)$ como:
+\begin{adjustwidth}{2cm}{}
+  $\displaystyle rfl(A_1,a,A_2) = \left(rfl(A_2), a, rfl(A_1)\right)$\\
+  $\displaystyle rfl(nulo) = nulo$\\
+\end{adjustwidth}
+
+Definimos el inverso de una ordenación de etiquetas, $inv([a_1,a_2,a_3, \dots, a_n])$ expresando el orden
+como secuencia de etiquetas o como unión de otros órdenes:
+\begin{adjustwidth}{2cm}{}
+  $\displaystyle inv([a_1,a_2,\dots]) = inv([a_2,a_3,\dots]) \cup [a_1]$\\
+  $\displaystyle inv(J \cup K) = inv(K) \cup inv(J)$\\
+  $\displaystyle inv([\ ]) = [\ ]$\\
+\end{adjustwidth}
+
+Usaremos además las funciones postorden ($pos()$), preorden ($pre()$) e inorden ($ino()$), ya definidas,
+que expresamos en esta notación como: \\
+\begin{adjustwidth}{2cm}{}
+  $pre(nulo) = [\ ]$\\*
+  $pos(nulo) = [\ ]$\\*
+  $ino(nulo) = [\ ]$\\*
+  $pre(A_1,a,A_2) = [a] \cup pre(A_1) \cup pre(A_2)$\\*
+  $pos(A_1,a,A_2) = pos(A_1)  \cup pos(A_2) \cup [a]$\\*
+  $ino(A_1,a,A_2) = ino(A_1) \cup [a] \cup ino(A_2)$\\
+\end{adjustwidth}
+
+Nótese que en todo momento estamos usando el operador $\cup$ para unir de manera ordenada los órdenes de 
+etiquetas resultado de los recorridos sobre el árbol, no como unión conjuntista.
+
+
+
+
+\bigskip  
+\subsection{Preorden y postorden}
+\textbf{El preorden del reflejado de un árbol es el inverso de su postorden. Es decir,
+  \begin{adjustwidth}{2cm}{}
+   $\displaystyle pre(rfl(A)) = inv(pos(A))$
+  \end{adjustwidth}
+}
+\medskip
+
+\noindent Demostramos usando las definiciones por inducción sobre la altura. Para el caso del árbol
+vacío es trivial:
+\begin{adjustwidth}{1cm}{}
+ $\displaystyle pre(rfl(nulo)) = pre(nulo) = [\ ]$\\
+ $\displaystyle inv(pos(nulo)) = inv([\ ]) = [\ ]$\\
+\end{adjustwidth}
+
+\noindent Y para el caso inductivo, tomando como hipótesis de inducción que está demostrado para $A_1,A_2$.
+\begin{adjustwidth}{0.5cm}{}
+ \mbox{$\displaystyle pre(rfl(A_1,a,A_2)) = pre(rfl(A_2),a,rfl(A_1)) = [a] \cup pre(rfl(A_2)) \cup pre(rfl(A_1))$} \\
+ \mbox{$\displaystyle inv(pos(A_1,a,A_2)) = inv(pos(A_1) \cup pos(A_2) \cup [a]) = [a] \cup inv(pos(A_2)) \cup inv(pos(A_1)$}
+\end{adjustwidth}
+Que por hipótesis de inducción, son iguales.\\
+
+
+\bigskip
+\textbf{El postorden del reflejado de un árbol es el inverso de su preorden. Es decir,
+  \begin{adjustwidth}{1cm}{}
+   $\displaystyle pos(rfl(A)) = inv(pre(A))$
+  \end{adjustwidth}
+}
+\medskip
+
+\noindent Esto es trivial sabiendo que $rfl(rfl(A)) = A$, y que $inv(inv(o)) = o$, y aplicando el resultado anterior al árbol reflejado.
+\begin{adjustwidth}{1cm}{}
+ $\displaystyle pre\left(rfl(rfl(A))\right) = inv\left(pos(rfl(A))\right)$\\
+ $\displaystyle inv(pre(A)) = inv(inv(pos(rfl(A))))$\\
+ $\displaystyle inv(pre(A)) = pos(rfl(A))$
+\end{adjustwidth}
+
+
+\bigskip
+\subsection{Inorden}
+\textbf{El inorden de un árbol es el inverso del inorden de su reflejado. Es decir,
+  \begin{adjustwidth}{2cm}{}
+    $ino(rfl(A)) = inv(ino(A))$
+  \end{adjustwidth}
+}
+\medskip
+\noindent Demostramos de nuevo por inducción sobre la altura. Para el caso trivial:
+\begin{adjustwidth}{1cm}{}
+  $ino(rfl(nulo)) = ino(nulo) = [\ ]$\\
+  $inv(ino(nulo)) = inv([\ ]) = [\ ]$
+\end{adjustwidth}
+
+\noindent Y ahora, suponiendo que esté demostrado para $A_1,A_2$, se tendrá: 
+\begin{adjustwidth}{1cm}{}
+ \mbox{$ino(rfl(A_1,a,A_2)) = ino(rfl(A_2),a,rfl(A_1)) = ino(rfl(A_2)) \cup [a] \cup ino(rfl(A_1))$}\\
+ \mbox{$inv(ino(A_1,a,A_2)) = inv(\ ino(A_1) \cup a \cup ino(A_2)\ ) = inv(ino(A_2)) \cup [a] \cup inv(ino(A_1))$}\\
+\end{adjustwidth}
+Donde, por hipótesis de inducción, ambos son iguales.
+
+
+\end{document}
