@@ -93,9 +93,7 @@ Theorem prerfl_invpos : forall {X:Type} (t:tree X),
 Proof.
   intros X t.
   induction t as [|x izq Hiz der Hdr].
-  (* Case t = nilt *)
     reflexivity.
-  (* Case t = (x izq der) *)
     simpl.
     rewrite -> rev_app_distr.
     rewrite -> rev_unit.
@@ -104,7 +102,7 @@ Proof.
     reflexivity.
 Qed.
 
-Remark posrfl_invpre : forall {X:Type} (t:tree X),
+Corollary posrfl_invpre : forall {X:Type} (t:tree X),
   posr(refl t) = rev(prer t).
 Proof.
   intros X t.
@@ -112,4 +110,19 @@ Proof.
   rewrite -> (prerfl_invpos (refl t)).
   rewrite -> rev_involutive.
   reflexivity.
+Qed.
+
+Theorem ino_rflrev : forall {X:Type} (t:tree X),
+  inor(refl t) = rev(inor t).
+Proof.
+  intros X t.
+  induction t as [| a izq Hiz der Hdr].
+    reflexivity.
+    simpl.
+    rewrite -> rev_app_distr.
+    rewrite -> Hiz.
+    rewrite -> Hdr.
+    simpl.
+    rewrite <- app_assoc.
+    reflexivity.
 Qed.
