@@ -25,7 +25,17 @@ Fixpoint rev {X:Type} (l:list X) : list X :=
     | x::xs => (rev xs) ++ [x]
   end.
 
-(** Auxiliary lemmas *)
+(** Auxiliary lemmas about refl *)
+Lemma refl_involutive : forall {X:Type} (t:tree X),
+  refl (refl t) = t.
+Proof.
+  intros X t.
+  induction t as [|a izq Hiz der Hdr].
+    reflexivity.
+    simpl. rewrite -> Hiz. rewrite -> Hdr. reflexivity.
+Qed.
+
+(** Auxiliary lemmas about rev *)
 Lemma rev_unit : forall {X:Type} (l:list X) (a:X), 
   rev (l ++ [a]) = a :: rev l.
 Proof.
@@ -42,6 +52,15 @@ Proof.
   induction x as [|x' xs].
     intros y. simpl. rewrite -> app_nil_r. reflexivity.
     intros y. simpl. rewrite -> IHxs. symmetry. apply app_assoc.
+Qed.
+
+Lemma rev_involutive : forall {X:Type} (l:list X),
+  rev (rev l) = l.
+Proof.
+  intros X l.
+  induction l as [|x xs].
+    reflexivity.
+    simpl. rewrite -> rev_unit. rewrite -> IHxs. reflexivity.
 Qed.
 
 
@@ -86,6 +105,11 @@ Proof.
 Qed.
 
 Remark posrfl_invpre : forall {X:Type} (t:tree X),
-  prer(refl t) = rev(posr t).
+  posr(refl t) = rev(prer t).
 Proof.
-  
+  intros X t.
+  rewrite <- (refl_involutive t) at 2.
+  rewrite -> (prerfl_invpos (refl t)).
+  rewrite -> rev_involutive.
+  reflexivity.
+Qed.
