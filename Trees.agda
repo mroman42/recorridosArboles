@@ -31,7 +31,7 @@ module Trees where
 
   tposorder : {A : Set} → Tree A → List A
   tposorder Nil = []
-  tposorder (Node a lt rt) = (tposorder lt) ++ (tinorder rt) ++ [ a ]
+  tposorder (Node a lt rt) = (tposorder lt) ++ (tposorder rt) ++ [ a ]
 
 
 
@@ -70,10 +70,13 @@ module Trees where
   invdist (p ∷ ps) qs = trans (trans (sym (invunit₂ (ps ++ qs) p)) (trans (cong (λ x → x ++ [ p ]) (invdist ps qs)) (sym (plusassoc (inv qs) (inv ps) [ p ])))) (cong (λ l → inv qs ++ l) (invunit₂ ps p))
 
 
+
   -- Theorems
   -- Preorder of a reflected tree
   prerfl : {A : Set} → (t : Tree A) → (tpreorder (reflect t)) ≡ (inv (tposorder t))
   prerfl Nil = refl
-  prerfl (Node a lt rt) = {!!}
+  prerfl (Node a lt rt) = trans (cong₂ (λ l r → a ∷ r ++ l) (prerfl lt) (prerfl rt))
+                          (trans (sym (cong (λ l → a ∷ l) (invdist (tposorder lt) (tposorder rt))))
+                          (trans (sym (invunit (tposorder lt ++ tposorder rt) a))
+                          (sym (cong inv (plusassoc (tposorder lt) (tposorder rt) [ a ])))))
 
-  
