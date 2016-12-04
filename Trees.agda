@@ -67,7 +67,10 @@ module Trees where
   -- Inversion distributes
   invdist : {A : Set} → (p q : List A) → inv (p ++ q) ≡ inv q ++ inv p
   invdist [] qs = sym (plusempty (inv qs))
-  invdist (p ∷ ps) qs = trans (trans (sym (invunit₂ (ps ++ qs) p)) (trans (cong (λ x → x ++ [ p ]) (invdist ps qs)) (sym (plusassoc (inv qs) (inv ps) [ p ])))) (cong (λ l → inv qs ++ l) (invunit₂ ps p))
+  invdist (p ∷ ps) qs = trans (trans (sym (invunit₂ (ps ++ qs) p))
+                        (trans (cong (λ x → x ++ [ p ]) (invdist ps qs))
+                        (sym (plusassoc (inv qs) (inv ps) [ p ]))))
+                        (cong (λ l → inv qs ++ l) (invunit₂ ps p))
 
 
 
@@ -80,3 +83,17 @@ module Trees where
                           (trans (sym (invunit (tposorder lt ++ tposorder rt) a))
                           (sym (cong inv (plusassoc (tposorder lt) (tposorder rt) [ a ])))))
 
+  -- Posorder of a reflected tree
+  posrfl : {A : Set} → (t : Tree A) → (tposorder (reflect t)) ≡ (inv (tpreorder t))
+  posrfl t = trans (sym (invinvolutive (tposorder (reflect t))))
+             (trans (sym (cong inv (prerfl (reflect t))))
+             (sym (cong (λ l → inv (tpreorder l)) (rflinvolutive t))))
+
+  -- Inorder of a reflected tree
+  inorfl : {A : Set} → (t : Tree A) → tinorder (reflect t) ≡ inv (tinorder t)
+  inorfl Nil = refl
+  inorfl (Node a l r) = trans
+                        (cong₂ (λ ls rs → rs ++ [ a ] ++ ls) (inorfl l) (inorfl r))
+                        (trans (plusassoc (inv (tinorder r)) [ a ] (inv (tinorder l)))
+                        (trans (sym (cong (λ x → x ++ inv (tinorder l)) (invdist [ a ] (tinorder r))))
+                               (sym (invdist (tinorder l) ([ a ] ++ tinorder r)))))
